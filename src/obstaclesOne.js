@@ -5,19 +5,22 @@ class ObstaclesOne {
     this.obstacleFriendOne;
     
     this.speedPutin = 0;
+    this.speedEnemy = 0;
+    this.speedFriend = 0;
 
-    
-    this.x2 = WIDTH / 40;
+    this.x2 = WIDTH / 22;
     this.y1 = HEIGHT / 10;
-    this.y2 = HEIGHT / 15;
+    this.y2 = HEIGHT / 10;
   }
 
   setup() {
     this.x1 = random((WIDTH / 8) - (WIDTH / 40), 3 * (WIDTH / 8) + (WIDTH / 40))  
     this.obstaclePutin = loadImage("assets/Putin.png"); 
-    this.obstacleEnemy = loadImage("assets/Ayatollah.jpg")
+    //this.obstacleEnemyOne = loadImage("assets/Ayatollah.png");
+    //this.obstacleFriendOne = loadImage("assets/MBS.png")
   }
 
+// Draw Putin
   drawPutin() {
     image(obstaclePutin, this.x1, this.y1, this.x2, this.y2)
   
@@ -36,7 +39,6 @@ class ObstaclesOne {
   
   this.checkCollission();
 
-
  // Acceleration
 if (keyIsDown(87)) {
   this.speedPutin += 0.6;
@@ -46,8 +48,7 @@ if (keyIsDown(87)) {
 if (this.speedPutin >= 6) {
   this.speedPutin = 6
 }
-
-  }
+}
 
 checkCollission() {
   const putinBoarders = {
@@ -71,14 +72,15 @@ intersectPutin(rectA, rectB) {
   );
 }
 
+// Draw enemy
 drawEnemyOne() {
   image(obstacleEnemyOne, this.x1, this.y1, this.x2, this.y2)
   
-    this.y1 += this.speedPutin;
-    this.speedPutin -= 0.3;
+    this.y1 += this.speedEnemy;
+    this.speedEnemy -= 0.6;
 
-  if (this.speedPutin <= 0) {
-    this.speedPutin = 0
+  if (this.speedEnemy <= 0) {
+    this.speedEnemy = 0
   }
 
   // CREATE boardes for collission
@@ -89,18 +91,16 @@ drawEnemyOne() {
   
   this.checkCollission();
 
-
  // Acceleration
 if (keyIsDown(87)) {
-  this.speedPutin += 0.6;
+  this.speedEnemy += 1.2;
 }
 
 // Speed Limit
-if (this.speedPutin >= 6) {
-  this.speedPutin = 6
+if (this.speedEnemy >= 10) {
+  this.speedEnemy = 10
 }
-
-  }
+}
 
 checkCollission() {
   const putinBoarders = {
@@ -124,14 +124,15 @@ intersectPutin(rectA, rectB) {
   );
 }
 
+// Draw friend
 drawFriendOne() {
-  image(obstacleEnemyOne, this.x1, this.y1, this.x2, this.y2)
+  image(obstacleFriendOne, this.x1, this.y1, this.x2, this.y2)
   
-    this.y1 += this.speedPutin;
-    this.speedPutin -= 0.3;
+    this.y1 += this.speedFriend;
+    this.speedFriend -= 0.5;
 
-  if (this.speedPutin <= 0) {
-    this.speedPutin = 0
+  if (this.speedFriend <= 0) {
+    this.speedFriend = 0
   }
 
   // CREATE boardes for collission
@@ -145,14 +146,13 @@ drawFriendOne() {
 
  // Acceleration
 if (keyIsDown(87)) {
-  this.speedPutin += 0.6;
+  this.speedFriend += 1.0;
 }
 
 // Speed Limit
-if (this.speedPutin >= 6) {
-  this.speedPutin = 6
+if (this.speedFriend >= 8) {
+  this.speedFriend = 8
 }
-
   }
 
 checkCollission() {
@@ -176,6 +176,4 @@ intersectPutin(rectA, rectB) {
     rectA.bottom < rectB.top
   );
 }
-
-
 }

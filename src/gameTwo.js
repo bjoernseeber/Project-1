@@ -9,16 +9,36 @@ class GameTwo {
   this.y4 = 4*(HEIGHT / 6);
   this.y5 = 5*(HEIGHT / 6);
 
-  this.obstaclesTwo = [];
+  this.obstaclesPutinTwo = [];
+  this.obstaclesEnemyTwo = [];
+  this.obstaclesFriendTwo = [];
 
+  this.blinkSpeed = 1;
+  this.blink = 100;
+  this.timeCount = 96;
   }
 
   setup() {
   this.horizon = loadImage("assets/Nuke-adjusted-2.png")
+
+  this.button = createButton('RESTART');
+  this.button.parent('canvas1')
+  this.button.position(WIDTH / 2 - WIDTH / 38, 15* (HEIGHT /20));
+  this.button.style('background-color','green');
+  this.button.hide();
+
+  this.button.mousePressed(restartGame);
+    function restartGame() {
+    location.reload();
+  }
   }
 
   drawHorizon() {
     image(this.horizon, WIDTH / 2, 0, WIDTH / 2, HEIGHT / 4.9)
+
+    if(this.timeCount === 0) {
+      this.button.show();
+    }     
   }
 
   drawRoadGround() {
@@ -45,7 +65,7 @@ class GameTwo {
     strokeWeight(4);
     line(3 * (WIDTH / 4), HEIGHT / 5, 3 * (WIDTH / 4), HEIGHT);
   }
-
+// ADD EFFEKT SEITENLINIE
   drawLineEffect() {
     fill(255,255,255);
     triangle(3 * (WIDTH / 4), HEIGHT / 5, 3 * (WIDTH / 4) - WIDTH / 100, HEIGHT, 3 * (WIDTH / 4), HEIGHT);
@@ -67,15 +87,22 @@ class GameTwo {
     this.y4 += this.speedTwo;
     this.y5 += this.speedTwo;
 
+  // Natural stalling
+  this.speedTwo -= 0.3
 
-// ACCELERATION
+  if (this.speedTwo <= 0) {
+    this.speedTwo = 0
+  }
+
+// Acceleration
     if (keyIsDown(38)) {
-      this.speedTwo += 0.025;
+      this.speedTwo += 0.6;
     }
-    
-    if (keyIsDown(40)) {
-      this.speedTwo -= 0.045;
-    }
+
+// Speed Limit
+if (this.speedTwo >= 6) {
+  this.speedTwo = 6
+}
 
 // Let the blocks repeat
 
@@ -90,7 +117,7 @@ class GameTwo {
   if (this.y3 >= HEIGHT){
     this.y3 = HEIGHT / 5;
   }
- 
+
   if (this.y4 >= HEIGHT){
     this.y4 = HEIGHT / 5;
   }
@@ -99,36 +126,129 @@ class GameTwo {
     this.y5 = HEIGHT / 5;
   }
 
-// Speed Limitations!
-if (this.speedTwo >= 6) {
-  this.speedTwo = 6
+// OBSTACLES
+// Draw Putin Obstacle
+
+if (frameCount % 50 === 0 && this.obstaclesPutinTwo.length < 2) {
+  this.obstaclesPutinTwo.push(new ObstaclesTwo());
+  this.obstaclesPutinTwo[this.obstaclesPutinTwo.length-1].setup()
 }
 
-if (this.speedTwo <= 0) {
-  this.speedTwo = 0
-}
-
-
-// Obstacles => Make random!
-
-if (frameCount % 200 === 0) {
-  this.obstaclesTwo.push(new ObstaclesTwo());
-  this.obstaclesTwo[this.obstaclesTwo.length-1].setup()
-
-}
-
-this.obstaclesTwo.forEach(obstacles => {
+this.obstaclesPutinTwo.forEach((obstacles, i) => {
 obstacles.drawPutin();
+
+  //Erase Putin 
+  if(  obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+    this.obstaclesPutinTwo.splice(i,1)
+}
+
+ // Add Score Putin
+  if(  obstacles.checkCollission()){
+  playerTwo.score += 5;
+}
 });
 
+// Draw Enemy Obstacle
+if (frameCount % 225 === 0 && this.obstaclesEnemyTwo.length < 2) {
+  this.obstaclesEnemyTwo.push(new ObstaclesTwo());
+  this.obstaclesEnemyTwo[this.obstaclesEnemyTwo.length-1].setup()
+}
 
+this.obstaclesEnemyTwo.forEach((obstacles,i) => {
+obstacles.drawEnemyTwo();
+
+//Erase Enemy
+if(obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+  this.obstaclesEnemyTwo.splice(i,1)
+}
+
+// Add Score Enemy
+if(obstacles.checkCollission()){
+playerTwo.score -= 50;
+}
+});
+
+// Draw Friend Obstacle
+if (frameCount % 125 === 0 && this.obstaclesFriendTwo.length < 2) {
+  this.obstaclesFriendTwo.push(new ObstaclesTwo());
+  this.obstaclesFriendTwo[this.obstaclesFriendTwo.length-1].setup()
+}
+
+this.obstaclesFriendTwo.forEach((obstacles,i) => {
+obstacles.drawFriendTwo();
+
+//Erase Friend
+if(obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+  this.obstaclesFriendTwo.splice(i,1)
+}
+
+// Add Score Friend
+if(obstacles.checkCollission()){
+playerTwo.score += 25;
+}
+});
 }
 
 drawBoarder () {
   stroke(10);
-  fill(100,0,0);
-  rect(WIDTH / 2, 0, WIDTH / 100, HEIGHT)
+  fill(255);
+  rect(WIDTH / 2, 0, WIDTH / 200, HEIGHT)
 }
 
-    
+drawScoreBox () {
+  stroke(0);
+  fill(255, 0, 0, 150);
+  rect(WIDTH - WIDTH / 8, 0, WIDTH / 8, HEIGHT / 9.8)
+}
+
+// TIMECOUNT
+
+drawTimeCount(){
+  
+  // Blink rythm
+this.blink = this.blink + this.blinkSpeed;
+
+if ( this.blink > 240 ) {
+  this.blinkSpeed = -10 ;
+}
+if ( this.blink < 50 ) {
+  this.blinkSpeed = 10 ;
+}
+
+
+  // Background
+  stroke(0);
+  fill(255);
+  rect(WIDTH / 2 - WIDTH / 16, 0, WIDTH / 8, HEIGHT / 9.8)
+
+  stroke(3);
+  fill(255, 255, 150, this.blink);
+  rect(WIDTH / 2 - WIDTH / 16, 0, WIDTH / 8, HEIGHT / 9.8)
+
+  if (frameCount % 3 === 0) {
+      this.timeCount -= 0.1
+  }
+  
+  if (this.timeCount <= 0) {
+    this.timeCount = 0
+  }
+  
+  textSize(20);
+  fill(0);
+  text(`T - ${this.timeCount.toFixed(1)}`,  WIDTH / 2 - WIDTH / 40 , HEIGHT / 15);
+  }
+
+
+//Background Sound
+
+playBackgroundSound(){ 
+if (!backgroundMusic.isPlaying()) {
+  backgroundMusic.play();
+}
+
+if (this.timeCount === 0) {
+  backgroundMusic.stop();
+}
+
+}
 }

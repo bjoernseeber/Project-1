@@ -11,8 +11,7 @@ class GameOne {
 
   this.obstaclesPutinOne = [];
   this.obstaclesEnemyOne = [];
-  this.obstacleFriendOne = [];
-
+  this.obstaclesFriendOne = [];
   }
 
   setup() {
@@ -20,7 +19,7 @@ class GameOne {
   }
 
   drawHorizon() {
-  image(this.horizon, 0, 0, WIDTH / 2, HEIGHT / 4.9)
+    image(this.horizon, 0, 0, WIDTH / 2, HEIGHT / 4.9)
   }
 
   drawRoadGround() {
@@ -48,6 +47,7 @@ class GameOne {
     line(WIDTH / 4 , HEIGHT / 5, WIDTH / 4 , HEIGHT);
   }
 
+// ADD EFFEKT SEITENLINIE
   drawLineEffect() {
     fill(255,255,255);
     triangle(WIDTH / 4, HEIGHT / 5, WIDTH / 4 - WIDTH / 100, HEIGHT, WIDTH / 4, HEIGHT);
@@ -55,7 +55,6 @@ class GameOne {
   }
 
   drawRoadMovement() {
-  
     strokeWeight(0);
     fill(150,150,150);
     rect((WIDTH / 4) - (WIDTH / 40), this.y1, WIDTH / 20, HEIGHT / 35);
@@ -100,72 +99,87 @@ if (this.speedOne >= 6) {
   if (this.y3 >= HEIGHT){
     this.y3 = HEIGHT / 5;
   }
- 
+
   if (this.y4 >= HEIGHT){
     this.y4 = HEIGHT / 5;
   }
+
   if (this.y5 >= HEIGHT){
     this.y5 = HEIGHT / 5;
   }  
 
-// INCLUDE PAUSE = LEERTASTE
- 
-
-
 // OBSTACLES
 
 // Draw Putin Obstacle
-  if (frameCount % 100 === 0 && this.obstaclesPutinOne.length < 2) {
+  if (frameCount % 50 === 0 && this.obstaclesPutinOne.length < 2) {
     this.obstaclesPutinOne.push(new ObstaclesOne());
     this.obstaclesPutinOne[this.obstaclesPutinOne.length-1].setup()
 }
 
 this.obstaclesPutinOne.forEach((obstacles,i) => {
-
   obstacles.drawPutin();
 
   //Erase Putin 
- if(  obstacles.checkCollission() || obstacles.y1 > HEIGHT){
-   this.obstaclesPutinOne.splice(i,1)
- }
-
- // Add Score Putin
- if(  obstacles.checkCollission()){
-  playerOne.score += 5;
+  if(obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+    this.obstaclesPutinOne.splice(i,1)
 }
 
+ // Add Score Putin
+  if(obstacles.checkCollission()){
+  playerOne.score += 5;
+}
 });
 
 // Draw Enemy Obstacle
-if (frameCount % 50 === 0 && this.obstaclesEnemyOne.length < 2) {
+if (frameCount % 225 === 0 && this.obstaclesEnemyOne.length < 2) {
   this.obstaclesEnemyOne.push(new ObstaclesOne());
   this.obstaclesEnemyOne[this.obstaclesEnemyOne.length-1].setup()
 }
 
 this.obstaclesEnemyOne.forEach((obstacles,i) => {
-
 obstacles.drawEnemyOne();
 
-//Erase EnemyOne 
-if(  obstacles.checkCollission() || obstacles.y1 > HEIGHT){
- this.obstaclesEnemyOne.splice(i,1)
+//Erase Enemy
+if(obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+  this.obstaclesEnemyOne.splice(i,1)
 }
 
-// Add Score EnemyOne
-if(  obstacles.checkCollission()){
+// Add Score Enemy
+if(obstacles.checkCollission()){
 playerOne.score -= 50;
 }
-
 });
 
+// Draw Friend Obstacle
+if (frameCount % 125 === 0 && this.obstaclesFriendOne.length < 2) {
+  this.obstaclesFriendOne.push(new ObstaclesOne());
+  this.obstaclesFriendOne[this.obstaclesFriendOne.length-1].setup()
+}
+
+this.obstaclesFriendOne.forEach((obstacles,i) => {
+obstacles.drawFriendOne();
+
+//Erase Friend
+if(obstacles.checkCollission() || obstacles.y1 > HEIGHT){
+  this.obstaclesFriendOne.splice(i,1)
+}
+
+// Add Score Friend
+if(obstacles.checkCollission()){
+playerOne.score += 25;
+}
+});
 }
 
 drawBoarder () {
   stroke(0);
-  fill(100,0,0);
-  rect(WIDTH / 2 - WIDTH / 200, 0, WIDTH / 100, HEIGHT)
+  fill(255);
+  rect(WIDTH / 2 - WIDTH / 200, 0, WIDTH / 200, HEIGHT)
 }
 
+drawScoreBox () {
+  stroke(0);
+  fill(255,0,0, 150);
+  rect(0, 0, WIDTH / 8, HEIGHT / 9.8)
 }
-
-
+}
